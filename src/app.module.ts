@@ -31,9 +31,12 @@ import { HttpErrorFilter } from './shared/http-error.filter';
     TimekeepingModule,
   ],
   controllers: [AppController],
-  providers: [AppService, {
-    provide: APP_FILTER,
-    useClass: HttpErrorFilter
-  }],
+  providers: [
+    AppService,
+    {
+      provide: APP_FILTER,
+      useClass: HttpErrorFilter,
+    },
+  ],
 })
 export class AppModule {}
