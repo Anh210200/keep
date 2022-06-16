@@ -82,7 +82,7 @@ model Timekeeping {
   morning_shift_end     DateTime? @db.Timestamp()
   afternoon_shift_start DateTime? @db.Timestamp()
   afternoon_shift_end   DateTime? @db.Timestamp()
-  status                Int       @default(0) @db.TinyInt() ///   -2:Không điểm danh   -1:Điểm danh trễ   0:Chưa biết   1:Điểm danh đầy đủ
+  status                Int       @default(0) @db.SmallInt ///   -2:Không điểm danh   -1:Điểm danh trễ   0:Chưa biết   1:Điểm danh đầy đủ
   empoyee_id            Int
 
   employee Employee @relation(fields: [empoyee_id], references: [id])
