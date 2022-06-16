@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Body, 
   Controller, 
   Get,
@@ -12,11 +13,17 @@ import { TimekeepingDto } from './dto';
 import { TimekeepingService } from './timekeeping.service';
 import { GetTimekeepingQuery } from './query';
 
+=======
+import { Body, Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { TimeKeepingDto } from './dto';
+import { TimekeepingService } from './timekeeping.service';
+>>>>>>> a5ba481 (coding timekeeping func)
 
 @Controller('timekeeping')
 export class TimekeepingController {
   constructor(private service: TimekeepingService) {}
 
+<<<<<<< HEAD
   @UseGuards(JwtGuard)
   @Get(':employeeId')
   getTimekeeping(
@@ -46,5 +53,13 @@ export class TimekeepingController {
   ) {
     console.log(qrcode);
     return this.service.qrCheck(employeeId, qrcode);
+=======
+  @Post(':employeeId/check')
+  qrCheck(
+    @Param('employeeId', ParseIntPipe) employeeId: number,
+    @Body() dto: TimeKeepingDto,
+  ) {
+    return this.service.qrCheck(employeeId, dto);
+>>>>>>> a5ba481 (coding timekeeping func)
   }
 }

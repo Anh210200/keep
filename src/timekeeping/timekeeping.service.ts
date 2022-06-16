@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { ForbiddenException } from '@nestjs/common/exceptions/forbidden.exception';
 import { SchedulerRegistry } from '@nestjs/schedule/dist/scheduler.registry';
@@ -82,6 +83,21 @@ export class TimekeepingService {
   }
 
   async qrCheck(employeeId: number, dto: TimekeepingDto) {
+=======
+import { Injectable, Post } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { Schedule, Timekeeping } from '@prisma/client';
+import dayjs from 'dayjs';
+import e from 'express';
+import { PrismaService } from 'src/prisma/prisma.service';
+import { TimeKeepingDto } from './dto';
+
+@Injectable()
+export class TimekeepingService {
+  constructor(private prisma: PrismaService) {}
+
+  async qrCheck(employeeId: number, dto: TimeKeepingDto) {
+>>>>>>> a5ba481 (coding timekeeping func)
     const employee = await this.prisma.employee.findUnique({
       where: {
         id: employeeId,
@@ -90,12 +106,16 @@ export class TimekeepingService {
         schedule_id: true,
       },
     });
+<<<<<<< HEAD
     console.log(employee);
+=======
+>>>>>>> a5ba481 (coding timekeeping func)
     const schedule = await this.prisma.schedule.findUnique({
       where: {
         id: employee.schedule_id,
       },
     });
+<<<<<<< HEAD
 
     const nowDayjsUtc = dayjs().utc().date(dayjs().date());
     const timeNowUnix = dayjs().year(1970).month(0).date(1).utc();
@@ -136,41 +156,103 @@ export class TimekeepingService {
       thirtyminutesbeforenowinmilliseconds < schedule.morning_shift_start.getTime()
     ) {
       await this.prisma.timekeeping.update({
+=======
+    let timekeeping = await this.prisma.timekeeping.findFirst({
+      where: {
+        employee_id: employeeId,
+        date: new Date(),
+      },
+    });
+    if (!timekeeping) {
+      timekeeping = await this.prisma.timekeeping.create({
+        data: {
+          employee_id: employeeId,
+          date: new Date(),
+        },
+      });
+    }
+    const now = dayjs();
+    if (
+      !schedule.morning_shift_start &&
+      now.isBefore(dayjs(schedule.morning_shift_start).add(30, 'minutes'))
+    ) {
+      timekeeping = await this.prisma.timekeeping.update({
+>>>>>>> a5ba481 (coding timekeeping func)
         where: {
           id: timekeeping.id,
         },
         data: {
+<<<<<<< HEAD
           morning_shift_end: nowDayjsUtc.toISOString(),
+=======
+          morning_shift_start: new Date(),
+>>>>>>> a5ba481 (coding timekeeping func)
         },
       });
       return;
     } else if (
+<<<<<<< HEAD
       !timekeeping.afternoon_shift_start &&
       thirtyminutesbeforenowinmilliseconds < schedule.afternoon_shift_start.getTime()
     ) {
       await this.prisma.timekeeping.update({
+=======
+      !schedule.morning_shift_end &&
+      now.isBefore(dayjs(schedule.morning_shift_end).add(30, 'minutes'))
+    ) {
+      timekeeping = await this.prisma.timekeeping.update({
+>>>>>>> a5ba481 (coding timekeeping func)
         where: {
           id: timekeeping.id,
         },
         data: {
+<<<<<<< HEAD
           afternoon_shift_start: nowDayjsUtc.toISOString(),
+=======
+          morning_shift_end: new Date(),
+>>>>>>> a5ba481 (coding timekeeping func)
         },
       });
       return;
     } else if (
+<<<<<<< HEAD
       !timekeeping.afternoon_shift_end &&
       thirtyminutesbeforenowinmilliseconds < schedule.afternoon_shift_end.getTime()
     ) {
       await this.prisma.timekeeping.update({
+=======
+      !schedule.afternoon_shift_start &&
+      now.isBefore(dayjs(schedule.afternoon_shift_start).add(30, 'minutes'))
+    ) {
+      timekeeping = await this.prisma.timekeeping.update({
+>>>>>>> a5ba481 (coding timekeeping func)
         where: {
           id: timekeeping.id,
         },
         data: {
+<<<<<<< HEAD
           afternoon_shift_end: nowDayjsUtc.toISOString(),
+=======
+          afternoon_shift_start: new Date(),
+        },
+      });
+      return;
+    } else if (
+      !schedule.afternoon_shift_end &&
+      now.isBefore(dayjs(schedule.afternoon_shift_end).add(30, 'minutes'))
+    ) {
+      timekeeping = await this.prisma.timekeeping.update({
+        where: {
+          id: timekeeping.id,
+        },
+        data: {
+          afternoon_shift_end: new Date(),
+>>>>>>> a5ba481 (coding timekeeping func)
         },
       });
       return;
     }
+<<<<<<< HEAD
   }
 
   private async createTimekeepingToday(employeeId: number) {
@@ -183,3 +265,34 @@ export class TimekeepingService {
     });
   }
 }
+=======
+    await this.updateTimekeepingStatus(schedule, timekeeping);
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_8PM)
+  async updateTimekeepingStatus(schedule: Schedule, timekeeping: Timekeeping) {
+    if (
+      !timekeeping.morning_shift_start ||
+      !timekeeping.morning_shift_end ||
+      !timekeeping.afternoon_shift_start ||
+      !timekeeping.afternoon_shift_end
+    ) {
+      await this.prisma.timekeeping.update({
+        where: {
+          id: timekeeping.id,
+        },
+        data: {
+          status: -2,
+        },
+      });
+    } else if (
+      dayjs(timekeeping.morning_shift_start).isAfter(
+        schedule.morning_shift_start,
+      ) ||
+      dayjs(timekeeping.morning_shift_end).isAfter(schedule.morning_shift_end)
+      // dayjs()
+    ) {
+    }
+  }
+}
+>>>>>>> a5ba481 (coding timekeeping func)
