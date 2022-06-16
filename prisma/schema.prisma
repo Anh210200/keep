@@ -71,7 +71,6 @@ model Absent {
 
   employee Employee @relation(fields: [employee_id], references: [id])
 
-
   @@unique([id, employee_id])
   @@map("absents")
 }
