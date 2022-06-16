@@ -1,5 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { EmployeeDto } from './dto';
 
 @Injectable()
 export class EmployeeService {
@@ -15,5 +16,19 @@ export class EmployeeService {
     }
     delete employee.schedule_id, delete employee.user_id;
     return employee;
+  }
+
+  async createEmployee(userId: number, dto: EmployeeDto) {
+    const employee = await this.prisma.employee.create({
+      data: {
+        code: dto.code,
+        name: dto.name,
+        gender: dto.gender,
+        phone_number: dto.phone_number,
+        address: dto.address,
+        date_start: dto.date_start,
+        user_id: userId,
+      },
+    });
   }
 }

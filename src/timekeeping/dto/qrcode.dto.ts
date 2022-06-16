@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
+<<<<<<< HEAD:src/timekeeping/dto/timekeeping.dto.ts
 <<<<<<< HEAD
 export class TimekeepingDto {
   @IsString()
@@ -7,6 +8,9 @@ export class TimekeepingDto {
   'qr_code_value': string;
 =======
 export class TimeKeepingDto {
+=======
+export class QrCodeDto {
+>>>>>>> ee8371e (partly finish timekeeping):src/timekeeping/dto/qrcode.dto.ts
   @IsString()
   @IsNotEmpty()
   'id': string;

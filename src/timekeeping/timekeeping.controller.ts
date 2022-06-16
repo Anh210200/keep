@@ -15,7 +15,7 @@ import { GetTimekeepingQuery } from './query';
 
 =======
 import { Body, Controller, Param, ParseIntPipe, Post } from '@nestjs/common';
-import { TimeKeepingDto } from './dto';
+import { QrCodeDto } from './dto';
 import { TimekeepingService } from './timekeeping.service';
 >>>>>>> a5ba481 (coding timekeeping func)
 
@@ -57,9 +57,13 @@ export class TimekeepingController {
   @Post(':employeeId/check')
   qrCheck(
     @Param('employeeId', ParseIntPipe) employeeId: number,
-    @Body() dto: TimeKeepingDto,
+    @Body() qrcode: QrCodeDto,
   ) {
+<<<<<<< HEAD
     return this.service.qrCheck(employeeId, dto);
 >>>>>>> a5ba481 (coding timekeeping func)
+=======
+    return this.service.qrCheck(employeeId, qrcode);
+>>>>>>> ee8371e (partly finish timekeeping)
   }
 }

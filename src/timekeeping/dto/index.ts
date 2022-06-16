@@ -1,1 +1,1 @@
-export * from './timekeeping.dto';
+export * from './qrcode.dto';
