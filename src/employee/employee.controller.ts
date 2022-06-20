@@ -10,6 +10,8 @@ export class EmployeeController {
   @UseGuards(JwtGuard)
   @Get('me')
   getEmployee(@GetUser('id') userId: number) {
+    console.log(userId);
+
     return this.employeeService.getEmployee(userId);
   }
 

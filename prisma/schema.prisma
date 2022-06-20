@@ -6,7 +6,6 @@ generator client {
 }
 
 datasource db {
-
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
@@ -77,12 +76,12 @@ model Absent {
 
 model Timekeeping {
   id                    Int       @id @default(autoincrement())
-  date                  DateTime  @db.Date
-  morning_shift_start   DateTime? @db.Timestamp()
-  morning_shift_end     DateTime? @db.Timestamp()
-  afternoon_shift_start DateTime? @db.Timestamp()
-  afternoon_shift_end   DateTime? @db.Timestamp()
-  status                Int       @default(0) @db.SmallInt ///   -3:Vắng   -2:Không điểm danh   -1:Điểm danh trễ   0:Chưa biết   1:Điểm danh đầy đủ
+  date                  DateTime  @db.DateTime()
+  morning_shift_start   DateTime? @db.DateTime()
+  morning_shift_end     DateTime? @db.DateTime()
+  afternoon_shift_start DateTime? @db.DateTime()
+  afternoon_shift_end   DateTime? @db.DateTime()
+  status                Int       @default(0) @db.TinyInt ///   -3:Vắng   -2:Không điểm danh   -1:Điểm danh trễ   0:Chưa biết   1:Điểm danh đầy đủ
   employee_id           Int
 
   employee Employee @relation(fields: [employee_id], references: [id])

@@ -1,4 +1,5 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
+import { ForbiddenException } from '@nestjs/common/exceptions/forbidden.exception';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ScheduleDto } from './dto';
 

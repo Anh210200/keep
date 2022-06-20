@@ -13,6 +13,6 @@ async function bootstrap() {
   const PORT = process.env.PORT || 3000;
   console.log('App running on ' + PORT.toString());
 
-  await app.listen(PORT);
+  await app.listen(3000);
 }
 bootstrap();

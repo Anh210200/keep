@@ -17,8 +17,6 @@ export class AbsentService {
         note: dto.note,
       },
     });
-    console.log(absent);
-
     return;
   }
 }

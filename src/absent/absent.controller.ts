@@ -20,7 +20,6 @@ export class AbsentController {
     @Param('employeeId', ParseIntPipe) employeeId: number,
     @Body() dto: AbsentDto,
   ) {
-    console.log(dto);
     return this.absentService.createAbsentForm(employeeId, dto);
   }
 }
