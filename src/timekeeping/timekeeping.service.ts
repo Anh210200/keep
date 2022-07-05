@@ -21,6 +21,9 @@ export class TimekeepingService {
     month: number,
     day: number,
   ) {
+    console.log('getTimekeeping called');
+    console.log('employeeId:' + employeeId);
+
     let timekeeping = await this.prisma.timekeeping.findFirst({
       where: {
         employee_id: employeeId,
@@ -53,6 +56,8 @@ export class TimekeepingService {
     if (!timekeeping) {
       timekeeping = await this.createTimekeeping(employeeId);
     }
+    console.log(timekeeping);
+
     return timekeeping;
   }
 

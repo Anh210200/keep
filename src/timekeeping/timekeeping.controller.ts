@@ -14,7 +14,7 @@ import { TimekeepingDto } from './dto';
 import { TimekeepingService } from './timekeeping.service';
 import { GetTimekeepingQuery } from './query';
 
-@Controller('timekeeping')
+@Controller('timekeepings')
 export class TimekeepingController {
   constructor(private service: TimekeepingService) {}
 
@@ -26,10 +26,10 @@ export class TimekeepingController {
   ) {
     if (queryParams.d) {
       return this.service.getTimekeeping(
+        employeeId,
         queryParams.y,
         queryParams.m,
         queryParams.d,
-        employeeId,
       );
     } else {
       return this.service.getTimekeepingByMonth(
@@ -39,6 +39,7 @@ export class TimekeepingController {
       );
     }
   }
+
   @UseGuards(JwtGuard)
   @Post(':employeeId/check')
   qrCheck(
