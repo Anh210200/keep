@@ -31,10 +31,10 @@ CREATE TABLE `employees` (
 -- CreateTable
 CREATE TABLE `schedules` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `morning_shift_start` TIME NOT NULL,
-    `morning_shift_end` TIME NOT NULL,
-    `afternoon_shift_start` TIME NOT NULL,
-    `afternoon_shift_end` TIME NOT NULL,
+    `morning_shift_start` DATETIME NOT NULL,
+    `morning_shift_end` DATETIME NOT NULL,
+    `afternoon_shift_start` DATETIME NOT NULL,
+    `afternoon_shift_end` DATETIME NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
@@ -42,8 +42,8 @@ CREATE TABLE `schedules` (
 -- CreateTable
 CREATE TABLE `absents` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `start_date` DATETIME NOT NULL,
-    `end_date` DATETIME NOT NULL,
+    `start_date` DATE NOT NULL,
+    `end_date` DATE NOT NULL,
     `note` TEXT NULL,
     `reason` VARCHAR(16) NOT NULL,
     `status` TINYINT NOT NULL DEFAULT 0,
@@ -71,6 +71,18 @@ CREATE TABLE `timekeepings` (
 -- CreateTable
 CREATE TABLE `qrcodes` (
     `id` VARCHAR(255) NOT NULL,
+
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `loggers` (
+    `id` VARCHAR(255) NOT NULL,
+    `date` DATE NOT NULL,
+    `originalUrl` TEXT NOT NULL,
+    `statusCode` CHAR(3) NOT NULL,
+    `userAgent` VARCHAR(255) NOT NULL,
+    `ip` VARCHAR(255) NOT NULL,
 
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

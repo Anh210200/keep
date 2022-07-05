@@ -20,19 +20,6 @@ model User {
 }
 
 model Employee {
-<<<<<<< HEAD
-  id           Int    @id @default(autoincrement())
-  code         String @unique @db.Char(8)
-  name         String @db.VarChar(64)
-  gender       Gender @default(male)
-  phone_number String @unique @db.Char(10)
-  address      String @db.VarChar(255)
-
-  avatar      Bytes?   @db.Blob
-  date_start  DateTime @db.Date
-  user_id     Int?     @unique
-  schedule_id Int?     @unique
-=======
   id           Int      @id @default(autoincrement())
   code         String   @unique @db.Char(8)
   name         String   @db.VarChar(64)
@@ -43,7 +30,6 @@ model Employee {
   start_date   DateTime @db.DateTime()
   user_id      Int?     @unique
   schedule_id  Int?     @unique
->>>>>>> f9f0d96 (tuan 5)
 
   user         User?         @relation(fields: [user_id], references: [id])
   schedule     Schedule?     @relation(fields: [schedule_id], references: [id])
