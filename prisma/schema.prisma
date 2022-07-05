@@ -20,6 +20,7 @@ model User {
 }
 
 model Employee {
+<<<<<<< HEAD
   id           Int    @id @default(autoincrement())
   code         String @unique @db.Char(8)
   name         String @db.VarChar(64)
@@ -31,6 +32,18 @@ model Employee {
   date_start  DateTime @db.Date
   user_id     Int?     @unique
   schedule_id Int?     @unique
+=======
+  id           Int      @id @default(autoincrement())
+  code         String   @unique @db.Char(8)
+  name         String   @db.VarChar(64)
+  gender       Gender   @default(male)
+  phone_number String   @unique @db.Char(10)
+  address      String   @db.VarChar(255)
+  avatar       Bytes?   @db.Blob
+  start_date   DateTime @db.DateTime()
+  user_id      Int?     @unique
+  schedule_id  Int?     @unique
+>>>>>>> f9f0d96 (tuan 5)
 
   user         User?         @relation(fields: [user_id], references: [id])
   schedule     Schedule?     @relation(fields: [schedule_id], references: [id])
@@ -48,10 +61,10 @@ enum Gender {
 
 model Schedule {
   id                    Int      @id @default(autoincrement())
-  morning_shift_start   DateTime @db.Time()
-  morning_shift_end     DateTime @db.Time()
-  afternoon_shift_start DateTime @db.Time()
-  afternoon_shift_end   DateTime @db.Time()
+  morning_shift_start   DateTime @db.DateTime()
+  morning_shift_end     DateTime @db.DateTime()
+  afternoon_shift_start DateTime @db.DateTime()
+  afternoon_shift_end   DateTime @db.DateTime()
 
   employee Employee?
 

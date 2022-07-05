@@ -1,6 +1,6 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { EmployeeDto } from './dto';
+import { AvatarDto, EmployeeDto } from './dto';
 
 @Injectable()
 export class EmployeeService {
@@ -26,8 +26,20 @@ export class EmployeeService {
         gender: dto.gender,
         phone_number: dto.phone_number,
         address: dto.address,
-        date_start: dto.date_start,
+        start_date: dto.start_date,
         user_id: userId,
+      },
+    });
+  }
+
+  async updateAvatar(userId: number, dto: AvatarDto) {
+    const employee = await this.getEmployee(userId);
+    await this.prisma.employee.update({
+      where: {
+        id: employee.id,
+      },
+      data: {
+        avatar: Buffer.from(dto.avatar),
       },
     });
   }

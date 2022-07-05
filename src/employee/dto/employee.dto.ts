@@ -19,5 +19,5 @@ export class EmployeeDto {
   address: string;
   @IsDateString()
   @IsNotEmpty()
-  date_start: string;
+  start_date: string;
 }

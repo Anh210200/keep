@@ -17,7 +17,7 @@ CREATE TABLE `employees` (
     `phone_number` CHAR(10) NOT NULL,
     `address` VARCHAR(255) NOT NULL,
     `avatar` BLOB NULL,
-    `date_start` DATETIME NOT NULL,
+    `start_date` DATETIME NOT NULL,
     `user_id` INTEGER NULL,
     `schedule_id` INTEGER NULL,
 

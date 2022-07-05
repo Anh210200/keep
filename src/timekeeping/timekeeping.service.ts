@@ -292,10 +292,18 @@ export class TimekeepingService {
             .toISOString(),
         },
       },
+      select: {
+        date: true,
+        morning_shift_start: true,
+        morning_shift_end: true,
+        afternoon_shift_start: true,
+        afternoon_shift_end: true,
+      },
     });
     if (!timekeepingsList) {
       throw new ForbiddenException('no-timekeeping-found');
     }
+    return timekeepingsList;
   }
 
   async qrCheck(employeeId: number, dto: TimekeepingDto) {
@@ -310,12 +318,15 @@ export class TimekeepingService {
     });
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
     console.log(employee);
 =======
 >>>>>>> a5ba481 (coding timekeeping func)
 =======
     console.log(employee);
 >>>>>>> 56d80dd (finish timekeeping)
+=======
+>>>>>>> f9f0d96 (tuan 5)
     const schedule = await this.prisma.schedule.findUnique({
       where: {
         id: employee.schedule_id,
@@ -327,7 +338,7 @@ export class TimekeepingService {
 >>>>>>> 56d80dd (finish timekeeping)
 
     const nowDayjsUtc = dayjs().utc().date(dayjs().date());
-    const timeNowUnix = dayjs().year(1970).month(0).date(1).utc();
+
     const timekeeping = await this.prisma.timekeeping.findFirst({
 <<<<<<< HEAD
       where: {
@@ -387,31 +398,26 @@ export class TimekeepingService {
     if (isQrCodeLegit === false) {
       throw new ForbiddenException('qrcode-not-matched');
     }
-    // user can checkin 30 minutes late;
-    const thirtyMinutesBeforeNowInMilliseconds = timeNowUnix
-      .subtract(30, 'minute')
-      .valueOf();
-    console.log('30 minutes before: %d', thirtyMinutesBeforeNowInMilliseconds);
-    console.log(
-      'morningShiftStart: %d',
-      schedule.morning_shift_start.getTime(),
-    );
-    console.log('morning_shift_end: %d', schedule.morning_shift_end.getTime());
-
-    console.log(
-      'afternoon_shift_start: %d',
-      schedule.afternoon_shift_start.getTime(),
-    );
-
-    console.log(
-      'afternoon_shift_end: %d',
-      schedule.afternoon_shift_end.getTime(),
-    );
-
+    const morningShiftStartToday = dayjs(schedule.morning_shift_start)
+      .year(nowDayjsUtc.year())
+      .month(nowDayjsUtc.month())
+      .date(nowDayjsUtc.date());
+    const morningShiftEndToday = dayjs(schedule.morning_shift_end)
+      .year(nowDayjsUtc.year())
+      .month(nowDayjsUtc.month())
+      .date(nowDayjsUtc.date());
+    const afternoonShiftStartToday = dayjs(schedule.afternoon_shift_start)
+      .year(nowDayjsUtc.year())
+      .month(nowDayjsUtc.month())
+      .date(nowDayjsUtc.date());
+    const afternoonShiftEndToday = dayjs(schedule.afternoon_shift_end)
+      .year(nowDayjsUtc.year())
+      .month(nowDayjsUtc.month())
+      .date(nowDayjsUtc.date());
+    // user can check in 30 minutes late;
     if (
       !timekeeping.morning_shift_start &&
-      thirtyMinutesBeforeNowInMilliseconds <
-        schedule.morning_shift_start.getTime()
+      nowDayjsUtc.isBefore(morningShiftStartToday.add(30, 'minutes'))
     ) {
 <<<<<<< HEAD
       timekeeping = await this.prisma.timekeeping.update({
@@ -457,9 +463,13 @@ export class TimekeepingService {
       return;
     } else if (
       !timekeeping.morning_shift_end &&
+<<<<<<< HEAD
       thirtyMinutesBeforeNowInMilliseconds <
         schedule.morning_shift_end.getTime()
 >>>>>>> 56d80dd (finish timekeeping)
+=======
+      nowDayjsUtc.isBefore(morningShiftEndToday.add(30, 'minutes'))
+>>>>>>> f9f0d96 (tuan 5)
     ) {
       await this.prisma.timekeeping.update({
 >>>>>>> ee8371e (partly finish timekeeping)
@@ -501,9 +511,13 @@ export class TimekeepingService {
       return;
     } else if (
       !timekeeping.afternoon_shift_start &&
+<<<<<<< HEAD
       thirtyMinutesBeforeNowInMilliseconds <
         schedule.afternoon_shift_start.getTime()
 >>>>>>> 56d80dd (finish timekeeping)
+=======
+      nowDayjsUtc.isBefore(afternoonShiftStartToday.add(30, 'minutes'))
+>>>>>>> f9f0d96 (tuan 5)
     ) {
       await this.prisma.timekeeping.update({
 >>>>>>> ee8371e (partly finish timekeeping)
@@ -524,8 +538,7 @@ export class TimekeepingService {
       return;
     } else if (
       !timekeeping.afternoon_shift_end &&
-      thirtyMinutesBeforeNowInMilliseconds <
-        schedule.afternoon_shift_end.getTime()
+      nowDayjsUtc.isBefore(afternoonShiftEndToday.add(30, 'minutes'))
     ) {
       await this.prisma.timekeeping.update({
         where: {
@@ -557,11 +570,11 @@ export class TimekeepingService {
   }
 
   private async createTimekeepingToday(employeeId: number) {
-    const nowDayjsUtc = dayjs().utc().date(dayjs().date());
+    const nowDayjsUtc = dayjs().utc().date(dayjs().date()).startOf('date');
     return await this.prisma.timekeeping.create({
       data: {
         employee_id: employeeId,
-        date: nowDayjsUtc.toDate(),
+        date: nowDayjsUtc.toISOString(),
       },
     });
   }
