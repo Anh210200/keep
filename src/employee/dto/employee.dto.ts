@@ -5,24 +5,19 @@ export class EmployeeDto {
   @IsString()
   @IsNotEmpty()
   code: string;
-
   @IsString()
   @IsNotEmpty()
   name: string;
-
   @IsString()
   @IsNotEmpty()
   gender: Gender;
-
   @IsString()
   @IsNotEmpty()
   phone_number: string;
-
   @IsString()
   @IsNotEmpty()
   address: string;
-  
   @IsDateString()
   @IsNotEmpty()
-  date_start: string;
+  start_date: string;
 }

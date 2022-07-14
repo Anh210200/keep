@@ -4,6 +4,6 @@ import { TimekeepingService } from './timekeeping.service';
 
 @Module({
   controllers: [TimekeepingController],
-  providers: [TimekeepingService]
+  providers: [TimekeepingService],
 })
 export class TimekeepingModule {}

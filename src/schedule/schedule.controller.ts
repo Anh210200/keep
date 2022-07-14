@@ -2,22 +2,19 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
   UseGuards,
 } from '@nestjs/common';
 // import { Schedule } from '@prisma/client';
-
-import { JwtGuard } from '../auth/guard';
+import { JwtGuard } from 'src/auth/guard';
 import { ScheduleDto } from './dto';
 import { ScheduleService } from './schedule.service';
 
 @Controller('schedules')
 export class ScheduleController {
-  constructor(private scheduleService: ScheduleService) { }
+  constructor(private scheduleService: ScheduleService) {}
 
   @UseGuards(JwtGuard)
   @Get(':employee_id')

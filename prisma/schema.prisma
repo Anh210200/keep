@@ -6,7 +6,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
@@ -26,8 +26,8 @@ model Employee {
   gender       Gender   @default(male)
   phone_number String   @unique @db.Char(10)
   address      String   @db.VarChar(255)
-  avatar       Bytes?
-  date_start   DateTime @db.Date
+  avatar       Bytes?   @db.MediumBlob
+  start_date   DateTime @db.DateTime()
   user_id      Int?     @unique
   schedule_id  Int?     @unique
 
@@ -47,10 +47,10 @@ enum Gender {
 
 model Schedule {
   id                    Int      @id @default(autoincrement())
-  morning_shift_start   DateTime @db.Time()
-  morning_shift_end     DateTime @db.Time()
-  afternoon_shift_start DateTime @db.Time()
-  afternoon_shift_end   DateTime @db.Time()
+  morning_shift_start   DateTime @db.DateTime()
+  morning_shift_end     DateTime @db.DateTime()
+  afternoon_shift_start DateTime @db.DateTime()
+  afternoon_shift_end   DateTime @db.DateTime()
 
   employee Employee?
 
@@ -58,12 +58,13 @@ model Schedule {
 }
 
 model Absent {
-  id          Int      @id @default(autoincrement())
-  start_date  DateTime @db.Date
-  end_date    DateTime @db.Date
-  note        String?  @db.Text
-  reason      String   @db.VarChar(16)
-  status      Int      @default(0) @db.SmallInt ///  -1: Từ chối   0: Chờ duyệt   1: Chấp thuận 
+  id         Int      @id @default(autoincrement())
+  start_date DateTime @db.DateTime()
+  end_date   DateTime @db.DateTime()
+  note       String?  @db.Text
+  reason     String   @db.VarChar(16)
+
+  status      Int @default(0) @db.TinyInt ///  -1: Từ chối   0: Chờ duyệt   1: Chấp thuận 
   employee_id Int
 
   employee Employee @relation(fields: [employee_id], references: [id])
@@ -74,12 +75,12 @@ model Absent {
 
 model Timekeeping {
   id                    Int       @id @default(autoincrement())
-  date                  DateTime  @db.Date
-  morning_shift_start   DateTime? @db.Timestamp()
-  morning_shift_end     DateTime? @db.Timestamp()
-  afternoon_shift_start DateTime? @db.Timestamp()
-  afternoon_shift_end   DateTime? @db.Timestamp()
-  status                Int       @default(0) @db.SmallInt ///   -3:Vắng   -2:Không điểm danh   -1:Điểm danh trễ   0:Chưa biết   1:Điểm danh đầy đủ
+  date                  DateTime  @db.DateTime()
+  morning_shift_start   DateTime? @db.DateTime()
+  morning_shift_end     DateTime? @db.DateTime()
+  afternoon_shift_start DateTime? @db.DateTime()
+  afternoon_shift_end   DateTime? @db.DateTime()
+  status                Int       @default(0) @db.TinyInt ///   -3:Vắng   -2:Không điểm danh   -1:Điểm danh trễ   0:Chưa biết   1:Điểm danh đầy đủ
   employee_id           Int
 
   employee Employee @relation(fields: [employee_id], references: [id])
@@ -96,13 +97,13 @@ model QrCode {
 }
 
 model Logger {
-  id          String   @id @db.VarChar(255) @default(uuid())
-  date        DateTime @db.Date
-  originalUrl String @db.Text
-  statusCode Int @db.Integer
-  contentLength Int @db.Integer
-  userAgent String @db.VarChar(255)
-  ip String @db.VarChar(255) 
+  id          String   @id @default(uuid()) @db.VarChar(255)
+  date        DateTime @db.DateTime()
+  originalUrl String   @db.Text
+  statusCode  String   @db.Char(3)
+  userAgent   String   @db.VarChar(255)
+  ip          String   @db.VarChar(255)
+
 
   @@map("loggers")
 }

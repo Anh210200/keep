@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   ParseIntPipe,
   Post,
@@ -15,7 +16,16 @@ export class AbsentController {
   constructor(private absentService: AbsentService) {}
 
   @UseGuards(JwtGuard)
-  @Post(':employeeId/create') createAbsentForm(
+  @Get(':employeeId')
+  findAbsentFormEndDateAfterToday(
+    @Param('employeeId', ParseIntPipe) employeeId: number,
+  ) {
+    return this.absentService.findAllAbsentForm(employeeId);
+  }
+
+  @UseGuards(JwtGuard)
+  @Post(':employeeId/create')
+  createAbsentForm(
     @Param('employeeId', ParseIntPipe) employeeId: number,
     @Body() dto: AbsentDto,
   ) {

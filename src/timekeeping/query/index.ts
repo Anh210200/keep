@@ -1,1 +1,1 @@
-export *from './get.timekeeping.query'
+export * from './get.timekeeping.query';

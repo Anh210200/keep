@@ -1,19 +1,20 @@
-import { Body, 
-  Controller, 
+import {
+  Body,
+  Controller,
   Get,
-  Param, 
-  ParseIntPipe, 
+  Param,
+  ParseIntPipe,
   Post,
   Query,
-  UseGuards, } from '@nestjs/common';
+  UseGuards,
+} from '@nestjs/common';
 
 import { JwtGuard } from 'src/auth/guard';
 import { TimekeepingDto } from './dto';
 import { TimekeepingService } from './timekeeping.service';
 import { GetTimekeepingQuery } from './query';
 
-
-@Controller('timekeeping')
+@Controller('timekeepings')
 export class TimekeepingController {
   constructor(private service: TimekeepingService) {}
 
@@ -23,14 +24,14 @@ export class TimekeepingController {
     @Param('employeeId', ParseIntPipe) employeeId: number,
     @Query() queryParams: GetTimekeepingQuery,
   ) {
-    if (queryParams.d){
+    if (queryParams.d) {
       return this.service.getTimekeeping(
+        employeeId,
         queryParams.y,
         queryParams.m,
         queryParams.d,
-        employeeId,
       );
-    } else{
+    } else {
       return this.service.getTimekeepingByMonth(
         employeeId,
         queryParams.y,
@@ -38,6 +39,7 @@ export class TimekeepingController {
       );
     }
   }
+
   @UseGuards(JwtGuard)
   @Post(':employeeId/check')
   qrCheck(

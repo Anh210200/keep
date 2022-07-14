@@ -1,4 +1,5 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
+import { ForbiddenException } from '@nestjs/common/exceptions/forbidden.exception';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { ScheduleDto } from './dto';
 
@@ -49,7 +50,6 @@ export class ScheduleService {
         afternoon_shift_end: new Date(dto.afternoon_shift_end),
       },
     });
-    
     console.log(schedule);
 
     await this.prisma.employee.update({
