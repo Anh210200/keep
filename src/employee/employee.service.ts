@@ -15,6 +15,7 @@ export class EmployeeService {
       throw new ForbiddenException('no-employee-found');
     }
     delete employee.schedule_id, delete employee.user_id;
+    console.log(employee);
     return employee;
   }
 
@@ -34,12 +35,15 @@ export class EmployeeService {
 
   async updateAvatar(userId: number, dto: AvatarDto) {
     const employee = await this.getEmployee(userId);
+    console.log('updateAvatar:');
+    console.log(Buffer.from(dto.avatar, 'base64'));
+
     await this.prisma.employee.update({
       where: {
         id: employee.id,
       },
       data: {
-        avatar: Buffer.from(dto.avatar),
+        avatar: Buffer.from(dto.avatar, 'base64'),
       },
     });
   }

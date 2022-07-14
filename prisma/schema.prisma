@@ -26,7 +26,7 @@ model Employee {
   gender       Gender   @default(male)
   phone_number String   @unique @db.Char(10)
   address      String   @db.VarChar(255)
-  avatar       Bytes?   @db.Blob
+  avatar       Bytes?   @db.MediumBlob
   start_date   DateTime @db.DateTime()
   user_id      Int?     @unique
   schedule_id  Int?     @unique
@@ -59,8 +59,8 @@ model Schedule {
 
 model Absent {
   id         Int      @id @default(autoincrement())
-  start_date DateTime @db.Date
-  end_date   DateTime @db.Date
+  start_date DateTime @db.DateTime()
+  end_date   DateTime @db.DateTime()
   note       String?  @db.Text
   reason     String   @db.VarChar(16)
 
@@ -98,7 +98,7 @@ model QrCode {
 
 model Logger {
   id          String   @id @default(uuid()) @db.VarChar(255)
-  date        DateTime @db.Date
+  date        DateTime @db.DateTime()
   originalUrl String   @db.Text
   statusCode  String   @db.Char(3)
   userAgent   String   @db.VarChar(255)

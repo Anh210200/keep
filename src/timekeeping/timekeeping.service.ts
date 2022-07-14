@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common/decorators/core/injectable.decorator';
 import { ForbiddenException } from '@nestjs/common/exceptions/forbidden.exception';
-import { SchedulerRegistry } from '@nestjs/schedule/dist/scheduler.registry';
 import * as dayjs from 'dayjs';
 import * as utc from 'dayjs/plugin/utc';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -8,10 +7,7 @@ import { TimekeepingDto } from './dto';
 
 @Injectable()
 export class TimekeepingService {
-  constructor(
-    private prisma: PrismaService,
-    private schedulerRegistry: SchedulerRegistry,
-  ) {
+  constructor(private prisma: PrismaService) {
     dayjs.extend(utc);
   }
 
@@ -27,23 +23,12 @@ export class TimekeepingService {
     let timekeeping = await this.prisma.timekeeping.findFirst({
       where: {
         employee_id: employeeId,
-        date: {
-          gte: dayjs
-            .utc()
-            .year(year)
-            // month from 0 - 11
-            .month(month - 1)
-            .date(day)
-            .startOf('date')
-            .toISOString(),
-          lte: dayjs
-            .utc()
-            .year(year)
-            .month(month - 1)
-            .date(day)
-            .endOf('date')
-            .toISOString(),
-        },
+        date: dayjs()
+          .year(year)
+          .month(month - 1)
+          .date(day)
+          .startOf('date')
+          .toISOString(),
       },
       select: {
         date: true,
@@ -66,14 +51,12 @@ export class TimekeepingService {
       where: {
         employee_id: employeeId,
         date: {
-          gte: dayjs
-            .utc()
+          gte: dayjs()
             .year(year)
             .month(month - 1)
             .startOf('month')
             .toISOString(),
-          lte: dayjs
-            .utc()
+          lte: dayjs()
             .year(year)
             .month(month - 1)
             .endOf('month')
@@ -110,14 +93,12 @@ export class TimekeepingService {
     });
 
     const nowDayjsUtc = dayjs().utc().date(dayjs().date());
+    const now = dayjs();
 
     const timekeeping = await this.prisma.timekeeping.findFirst({
       where: {
         employee_id: employeeId,
-        date: {
-          gte: nowDayjsUtc.startOf('date').toISOString(),
-          lte: nowDayjsUtc.endOf('date').toISOString(),
-        },
+        date: now.startOf('date').toISOString(),
       },
     });
     if (!timekeeping) {
@@ -129,63 +110,67 @@ export class TimekeepingService {
     if (isQrCodeLegit === false) {
       throw new ForbiddenException('qrcode-not-matched');
     }
-    const morningShiftStartSchedule = dayjs(schedule.morning_shift_start)
-      .year(nowDayjsUtc.year())
-      .month(nowDayjsUtc.month())
-      .date(nowDayjsUtc.date());
-    const morningShiftEndSchedule = dayjs(schedule.morning_shift_end)
-      .year(nowDayjsUtc.year())
-      .month(nowDayjsUtc.month())
-      .date(nowDayjsUtc.date());
-    const afternoonShiftStartSchedule = dayjs(schedule.afternoon_shift_start)
-      .year(nowDayjsUtc.year())
-      .month(nowDayjsUtc.month())
-      .date(nowDayjsUtc.date());
-    const afternoonShiftEndSchedule = dayjs(schedule.afternoon_shift_end)
-      .year(nowDayjsUtc.year())
-      .month(nowDayjsUtc.month())
-      .date(nowDayjsUtc.date());
+    const morningShiftStartSchedule = now
+      .hour(schedule.morning_shift_start.getHours())
+      .minute(schedule.morning_shift_start.getMinutes());
+
+    const morningShiftEndSchedule = now
+      .hour(schedule.morning_shift_end.getHours())
+      .minute(schedule.morning_shift_end.getMinutes());
+
+    const afternoonShiftStartSchedule = now
+      .hour(schedule.afternoon_shift_start.getHours())
+      .minute(schedule.afternoon_shift_start.getMinutes());
+
+    const afternoonShiftEndSchedule = now
+      .hour(schedule.afternoon_shift_end.getHours())
+      .minute(schedule.afternoon_shift_end.getMinutes());
+
+    console.log(now.isBefore(morningShiftStartSchedule.add(2, 'hours')));
+    console.log(now);
+    console.log(morningShiftStartSchedule.add(2, 'hours'));
+
     // user can check in start max 2 hours late;
     // others max 30 minutes late;
     // last check out = check in start late time + schedule time + 30 minutes;
     if (
       !timekeeping.morning_shift_start &&
-      nowDayjsUtc.isBefore(morningShiftStartSchedule.add(2, 'hours'))
+      now.isBefore(morningShiftStartSchedule.add(2, 'hours'))
     ) {
       await this.prisma.timekeeping.update({
         where: {
           id: timekeeping.id,
         },
         data: {
-          morning_shift_start: new Date(),
+          morning_shift_start: now.toISOString(),
         },
       });
       return;
     }
     if (
-      !schedule.morning_shift_end &&
-      nowDayjsUtc.isBefore(morningShiftEndSchedule.add(30, 'minutes'))
+      !timekeeping.morning_shift_end &&
+      now.isBefore(morningShiftEndSchedule.add(30, 'minutes'))
     ) {
       await this.prisma.timekeeping.update({
         where: {
           id: timekeeping.id,
         },
         data: {
-          morning_shift_end: new Date(),
+          morning_shift_end: now.toISOString(),
         },
       });
       return;
     }
     if (
-      !schedule.afternoon_shift_start &&
-      nowDayjsUtc.isBefore(afternoonShiftStartSchedule.add(30, 'minutes'))
+      !timekeeping.afternoon_shift_start &&
+      now.isBefore(afternoonShiftStartSchedule.add(30, 'minutes'))
     ) {
       await this.prisma.timekeeping.update({
         where: {
           id: timekeeping.id,
         },
         data: {
-          afternoon_shift_start: nowDayjsUtc.toISOString(),
+          afternoon_shift_start: now.toISOString(),
         },
       });
       return;
@@ -195,7 +180,7 @@ export class TimekeepingService {
     ).diff(morningShiftStartSchedule, 'minutes');
     if (
       !timekeeping.afternoon_shift_end &&
-      nowDayjsUtc.isBefore(
+      now.isBefore(
         afternoonShiftEndSchedule
           .add(morningShiftStartLateTime, 'minutes')
           .add(30, 'minutes'),
@@ -206,7 +191,7 @@ export class TimekeepingService {
           id: timekeeping.id,
         },
         data: {
-          afternoon_shift_end: nowDayjsUtc.toISOString(),
+          afternoon_shift_end: now.toISOString(),
         },
       });
       return;
@@ -214,11 +199,10 @@ export class TimekeepingService {
   }
 
   private async createTimekeeping(employeeId: number) {
-    const nowDayjsUtc = dayjs().utc().date(dayjs().date()).startOf('date');
     return await this.prisma.timekeeping.create({
       data: {
         employee_id: employeeId,
-        date: nowDayjsUtc.toISOString(),
+        date: dayjs().startOf('date').toISOString(),
       },
     });
   }
